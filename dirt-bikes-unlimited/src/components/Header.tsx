@@ -20,6 +20,12 @@ const Header: React.FC = () => {
           >
             Services
           </Link>
+          <Link
+            to="/shop"
+            className="text-primary hover:text-accent transition-colors duration-300"
+          >
+            Shop
+          </Link>
         </div>
 
         <div className="flex-shrink-0">
