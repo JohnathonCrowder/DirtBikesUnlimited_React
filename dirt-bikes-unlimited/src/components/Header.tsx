@@ -46,7 +46,7 @@ const Header: React.FC = () => {
             Contact
           </Link>
           <Link
-            to="/contact"
+            to="/booking"
             className="bg-accent text-white px-4 py-2 rounded-full hover:bg-opacity-80 transition-colors duration-300"
           >
             Book Service

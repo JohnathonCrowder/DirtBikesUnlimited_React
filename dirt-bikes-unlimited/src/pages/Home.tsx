@@ -222,26 +222,38 @@ const Home: React.FC = () => {
           <h2 className="text-4xl font-heading font-bold text-center mb-12">
             What Our Riders Say
           </h2>
-          <Slider {...testimonialSettings}>
-            <div className="bg-white p-8 rounded-lg shadow-lg max-w-3xl mx-auto">
-              <p className="text-xl italic mb-4">
-                "These guys treat every bike like it's their own. I won't trust
-                my KTM with anyone else. Seriously impressed!"
-              </p>
-              <strong className="text-lg">
-                — Mike Johnson, Pro-Amateur Rider
-              </strong>
-            </div>
-            <div className="bg-white p-8 rounded-lg shadow-lg max-w-3xl mx-auto">
-              <p className="text-xl italic mb-4">
-                "Professional service from start to finish. They brought my
-                vintage Honda back to life!"
-              </p>
-              <strong className="text-lg">
-                — Sarah Lee, Vintage Bike Collector
-              </strong>
-            </div>
-          </Slider>
+          <div className="max-w-4xl mx-auto">
+            {" "}
+            {/* Add this wrapper */}
+            <Slider {...testimonialSettings}>
+              <div className="px-4">
+                {" "}
+                {/* Add padding to each slide */}
+                <div className="bg-white p-8 rounded-lg shadow-lg">
+                  <p className="text-xl italic mb-4">
+                    "These guys treat every bike like it's their own. I won't
+                    trust my KTM with anyone else. Seriously impressed!"
+                  </p>
+                  <strong className="text-lg">
+                    — Mike Johnson, Pro-Amateur Rider
+                  </strong>
+                </div>
+              </div>
+              <div className="px-4">
+                {" "}
+                {/* Add padding to each slide */}
+                <div className="bg-white p-8 rounded-lg shadow-lg">
+                  <p className="text-xl italic mb-4">
+                    "Professional service from start to finish. They brought my
+                    vintage Honda back to life!"
+                  </p>
+                  <strong className="text-lg">
+                    — Sarah Lee, Vintage Bike Collector
+                  </strong>
+                </div>
+              </div>
+            </Slider>
+          </div>
         </div>
       </section>
 
