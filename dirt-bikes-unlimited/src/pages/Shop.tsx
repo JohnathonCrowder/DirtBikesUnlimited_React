@@ -18,6 +18,11 @@ interface Product {
   price: number;
   image: string;
   description: string;
+  inStock: boolean;
+}
+
+interface CartItem extends Product {
+  quantity: number;
 }
 
 const Shop: React.FC = () => {
@@ -25,6 +30,9 @@ const Shop: React.FC = () => {
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
   useEffect(() => {
     AOS.init({
@@ -42,6 +50,7 @@ const Shop: React.FC = () => {
         image: product1,
         description:
           "High-quality aluminum handlebars for improved control and comfort.",
+        inStock: true,
       },
       {
         id: 2,
@@ -51,6 +60,7 @@ const Shop: React.FC = () => {
         image: product2,
         description:
           "DOT certified helmet with advanced ventilation and comfort padding.",
+        inStock: true,
       },
       {
         id: 3,
@@ -60,6 +70,7 @@ const Shop: React.FC = () => {
         image: product3,
         description:
           "All-terrain tires designed for maximum traction in muddy conditions.",
+        inStock: false,
       },
       {
         id: 4,
@@ -69,6 +80,7 @@ const Shop: React.FC = () => {
         image: product4,
         description:
           "Lightweight, breathable jersey for optimal comfort during rides.",
+        inStock: true,
       },
       {
         id: 5,
@@ -78,6 +90,7 @@ const Shop: React.FC = () => {
         image: product5,
         description:
           "High-performance suspension kit for improved handling and comfort.",
+        inStock: true,
       },
       {
         id: 6,
@@ -87,6 +100,7 @@ const Shop: React.FC = () => {
         image: product6,
         description:
           "Comprehensive toolkit for on-the-go repairs and maintenance.",
+        inStock: true,
       },
     ];
 
@@ -114,6 +128,42 @@ const Shop: React.FC = () => {
         product.description.toLowerCase().includes(term)
     );
     setFilteredProducts(filtered);
+  };
+
+  const addToCart = (product: Product) => {
+    setCart((prevCart) => {
+      const existingItem = prevCart.find((item) => item.id === product.id);
+      if (existingItem) {
+        return prevCart.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+      }
+      return [...prevCart, { ...product, quantity: 1 }];
+    });
+  };
+
+  const removeFromCart = (productId: number) => {
+    setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
+  };
+
+  const updateQuantity = (productId: number, newQuantity: number) => {
+    if (newQuantity < 1) return;
+    setCart((prevCart) =>
+      prevCart.map((item) =>
+        item.id === productId ? { ...item, quantity: newQuantity } : item
+      )
+    );
+  };
+
+  const getTotalPrice = () => {
+    return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  };
+
+  const handleCheckout = () => {
+    setIsCheckoutOpen(true);
+    setIsCartOpen(false);
   };
 
   const categories = ["All", "Parts", "Gear", "Accessories"];
@@ -197,9 +247,18 @@ const Shop: React.FC = () => {
                     <span className="text-2xl font-bold text-accent">
                       ${product.price.toFixed(2)}
                     </span>
-                    <button className="bg-accent text-white px-4 py-2 rounded-full hover:bg-opacity-80 transition-colors duration-300">
-                      Add to Cart
-                    </button>
+                    {product.inStock ? (
+                      <button
+                        className="bg-accent text-white px-4 py-2 rounded-full hover:bg-opacity-80 transition-colors duration-300"
+                        onClick={() => addToCart(product)}
+                      >
+                        Add to Cart
+                      </button>
+                    ) : (
+                      <span className="text-red-500 font-semibold">
+                        Out of Stock
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -207,6 +266,169 @@ const Shop: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* Cart Button */}
+      <button
+        className="fixed bottom-4 right-4 bg-accent text-white p-4 rounded-full shadow-lg"
+        onClick={() => setIsCartOpen(true)}
+      >
+        <i className="fas fa-shopping-cart"></i>
+        <span className="ml-2">
+          {cart.reduce((total, item) => total + item.quantity, 0)}
+        </span>
+      </button>
+
+      {/* Cart Modal */}
+      {isCartOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-8 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+            <h2 className="text-2xl font-bold mb-4">Your Cart</h2>
+            {cart.length === 0 ? (
+              <p>Your cart is empty.</p>
+            ) : (
+              <>
+                {cart.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center justify-between mb-4"
+                  >
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-16 h-16 object-cover rounded"
+                    />
+                    <div className="flex-grow ml-4">
+                      <h3 className="font-semibold">{item.name}</h3>
+                      <p>${item.price.toFixed(2)}</p>
+                    </div>
+                    <div className="flex items-center">
+                      <button
+                        className="px-2 py-1 bg-gray-200 rounded-l"
+                        onClick={() =>
+                          updateQuantity(item.id, item.quantity - 1)
+                        }
+                      >
+                        -
+                      </button>
+                      <span className="px-4 py-1 bg-gray-100">
+                        {item.quantity}
+                      </span>
+                      <button
+                        className="px-2 py-1 bg-gray-200 rounded-r"
+                        onClick={() =>
+                          updateQuantity(item.id, item.quantity + 1)
+                        }
+                      >
+                        +
+                      </button>
+                    </div>
+                    <button
+                      className="ml-4 text-red-500"
+                      onClick={() => removeFromCart(item.id)}
+                    >
+                      <i className="fas fa-trash"></i>
+                    </button>
+                  </div>
+                ))}
+                <div className="mt-8">
+                  <p className="text-xl font-bold">
+                    Total: ${getTotalPrice().toFixed(2)}
+                  </p>
+                  <button
+                    className="mt-4 w-full bg-accent text-white py-2 rounded-lg hover:bg-opacity-80 transition-colors duration-300"
+                    onClick={handleCheckout}
+                  >
+                    Proceed to Checkout
+                  </button>
+                </div>
+              </>
+            )}
+            <button
+              className="mt-4 text-gray-600 hover:text-gray-800"
+              onClick={() => setIsCartOpen(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Checkout Modal */}
+      {isCheckoutOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-8 rounded-lg max-w-2xl w-full">
+            <h2 className="text-2xl font-bold mb-4">Checkout</h2>
+            <form className="space-y-4">
+              <div>
+                <label htmlFor="name" className="block mb-1">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  className="w-full px-4 py-2 border rounded"
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="email" className="block mb-1">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  className="w-full px-4 py-2 border rounded"
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="address" className="block mb-1">
+                  Shipping Address
+                </label>
+                <textarea
+                  id="address"
+                  className="w-full px-4 py-2 border rounded"
+                  required
+                ></textarea>
+              </div>
+              <div>
+                <label htmlFor="card" className="block mb-1">
+                  Credit Card Number
+                </label>
+                <input
+                  type="text"
+                  id="card"
+                  className="w-full px-4 py-2 border rounded"
+                  required
+                />
+              </div>
+              <p className="text-xl font-bold">
+                Total: ${getTotalPrice().toFixed(2)}
+              </p>
+              <button
+                type="submit"
+                className="w-full bg-accent text-white py-2 rounded-lg hover:bg-opacity-80 transition-colors duration-300"
+                onClick={(e) => {
+                  e.preventDefault();
+                  alert(
+                    "Thank you for your purchase! This is a demo, so no actual transaction has occurred."
+                  );
+                  setIsCheckoutOpen(false);
+                  setCart([]);
+                }}
+              >
+                Complete Purchase
+              </button>
+            </form>
+            <button
+              className="mt-4 text-gray-600 hover:text-gray-800"
+              onClick={() => setIsCheckoutOpen(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Call to Action */}
       <section className="py-20 bg-primary text-white text-center">
