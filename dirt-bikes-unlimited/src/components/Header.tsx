@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/images/dbu-logo.png";
-import heroImage from "../assets/images/hero-dirt-bike.jpg";
 
 const Header: React.FC = () => {
   return (

@@ -3,7 +3,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 
 // Import images
-import contactHero from "../assets/images/contact-hero.jpg";
+import contactHero from "../assets/images/hero-dirt-bike.jpg";
 
 const Contact: React.FC = () => {
   const [formData, setFormData] = useState({

@@ -6,7 +6,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 // Import images
-import servicesHero from "../assets/images/services-hero.jpg";
+import servicesHero from "../assets/images/hero-dirt-bike.jpg";
 import customerAvatar from "../assets/images/customer-avatar.jpg";
 import product1 from "../assets/images/shop/product1.jpg";
 import product2 from "../assets/images/shop/product2.jpg";
@@ -136,16 +136,6 @@ const Services: React.FC = () => {
         },
       },
     ],
-  };
-
-  const testimonialSliderSettings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 5000,
   };
 
   const featuredProducts = [

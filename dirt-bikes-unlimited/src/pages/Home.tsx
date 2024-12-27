@@ -8,7 +8,6 @@ import { Link } from "react-router-dom";
 
 // Import images
 import heroDirtBike from "../assets/images/hero-dirt-bike.jpg";
-import testimonialAvatar from "../assets/images/customer-avatar.jpg";
 
 const Home: React.FC = () => {
   useEffect(() => {

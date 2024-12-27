@@ -3,7 +3,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 
 // Import hero image
-import bookingHero from "../assets/images/booking-hero.jpg";
+import bookingHero from "../assets/images/hero-dirt-bike.jpg";
 
 interface BookingFormData {
   name: string;

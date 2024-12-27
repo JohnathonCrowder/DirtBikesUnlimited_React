@@ -3,7 +3,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 
 // Import images
-import aboutHero from "../assets/images/about-hero.jpg";
+import aboutHero from "../assets/images/hero-dirt-bike.jpg";
 import shopFront from "../assets/images/shop-front.jpg";
 import johnRider from "../assets/images/john-rider.jpg";
 import sarahJohnson from "../assets/images/sarah-johnson.jpg";

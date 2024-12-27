@@ -1,4 +1,8 @@
-gsap.registerPlugin(ScrollTrigger);
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
+
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
 document.addEventListener("DOMContentLoaded", () => {
   initNavbarScroll();
@@ -7,25 +11,13 @@ document.addEventListener("DOMContentLoaded", () => {
   initParallaxEffects();
   initServiceCardHover();
   animateHeroContent();
+  initMobileMenu();
 });
 
-function animateHeroContent() {
-  const heroContent = document.querySelector(".hero-content");
-  if (heroContent) {
-    gsap.set(heroContent.children, { opacity: 0, y: 50 }); // Set everything invisible initially
-
-    gsap.to(heroContent.children, {
-      opacity: 1,
-      y: 0,
-      duration: 0.7,
-      stagger: 0.2,
-      ease: "power2.out",
-    });
-  }
-}
-
 function initNavbarScroll() {
-  const navbar = document.querySelector(".navbar");
+  const navbar = document.querySelector<HTMLElement>(".navbar");
+  if (!navbar) return;
+
   window.addEventListener("scroll", () => {
     if (window.scrollY > 100) {
       navbar.classList.add("navbar-scrolled");
@@ -36,11 +28,11 @@ function initNavbarScroll() {
 }
 
 function initParallaxEffects() {
-  const parallaxElements = document.querySelectorAll(".parallax");
+  const parallaxElements = document.querySelectorAll<HTMLElement>(".parallax");
   parallaxElements.forEach((el) => {
-    const speed = el.dataset.speed || 0.5;
+    const speed = parseFloat(el.dataset.speed || "0.5");
     gsap.to(el, {
-      backgroundPositionY: () => innerHeight * speed * -1,
+      backgroundPositionY: () => window.innerHeight * speed * -1,
       ease: "none",
       scrollTrigger: {
         trigger: el,
@@ -53,7 +45,7 @@ function initParallaxEffects() {
 }
 
 function initScrollAnimations() {
-  gsap.utils.toArray(".fade-in").forEach((element) => {
+  gsap.utils.toArray<HTMLElement>(".fade-in").forEach((element) => {
     gsap.from(element, {
       opacity: 0,
       y: 50,
@@ -70,7 +62,7 @@ function initScrollAnimations() {
     });
   });
 
-  const serviceCards = gsap.utils.toArray(".service-card");
+  const serviceCards = gsap.utils.toArray<HTMLElement>(".service-card");
   gsap.from(serviceCards, {
     opacity: 0,
     y: 100,
@@ -87,32 +79,34 @@ function initScrollAnimations() {
 }
 
 function initSmoothScroll() {
-  const links = document.querySelectorAll("a[href^='#']");
+  const links = document.querySelectorAll<HTMLAnchorElement>("a[href^='#']");
   links.forEach((link) => {
-    link.addEventListener("click", function (e) {
+    link.addEventListener("click", (e) => {
       e.preventDefault();
-      const targetId = this.getAttribute("href");
-      gsap.to(window, {
-        duration: 1,
-        scrollTo: targetId,
-        ease: "power2.inOut",
-      });
+      const targetId = link.getAttribute("href");
+      if (targetId) {
+        gsap.to(window, {
+          duration: 1,
+          scrollTo: targetId,
+          ease: "power2.inOut",
+        });
+      }
     });
   });
 }
 
 function initServiceCardHover() {
-  const cards = document.querySelectorAll(".service-card");
+  const cards = document.querySelectorAll<HTMLElement>(".service-card");
   cards.forEach((card) => {
-    card.addEventListener("mouseenter", (e) => {
-      gsap.to(e.currentTarget, {
+    card.addEventListener("mouseenter", () => {
+      gsap.to(card, {
         duration: 0.3,
         y: -10,
         boxShadow: "0 10px 20px rgba(0,0,0,0.2)",
       });
     });
-    card.addEventListener("mouseleave", (e) => {
-      gsap.to(e.currentTarget, {
+    card.addEventListener("mouseleave", () => {
+      gsap.to(card, {
         duration: 0.3,
         y: 0,
         boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
@@ -121,12 +115,31 @@ function initServiceCardHover() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-  const mobileMenuToggle = document.querySelector(".mobile-menu-toggle");
-  const navLinks = document.querySelector(".nav-links");
+function initMobileMenu() {
+  const mobileMenuToggle = document.querySelector<HTMLElement>(
+    ".mobile-menu-toggle"
+  );
+  const navLinks = document.querySelector<HTMLElement>(".nav-links");
 
-  mobileMenuToggle.addEventListener("click", function () {
+  if (!mobileMenuToggle || !navLinks) return;
+
+  mobileMenuToggle.addEventListener("click", () => {
     navLinks.classList.toggle("active");
-    this.classList.toggle("active");
+    mobileMenuToggle.classList.toggle("active");
   });
-});
+}
+
+function animateHeroContent() {
+  const heroContent = document.querySelector<HTMLElement>(".hero-content");
+  if (!heroContent) return;
+
+  const children = Array.from(heroContent.children);
+  gsap.set(children, { opacity: 0, y: 50 });
+  gsap.to(children, {
+    opacity: 1,
+    y: 0,
+    duration: 0.7,
+    stagger: 0.2,
+    ease: "power2.out",
+  });
+}
